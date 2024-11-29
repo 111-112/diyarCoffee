@@ -15,6 +15,8 @@ import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
 import { useNavigate } from "react-router-dom";
 import basketEmpty from "../../assets/images/logo/basketEmpty.png";
+import SimpleBar from "simplebar-react";
+import "simplebar/dist/simplebar.min.css";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -30,6 +32,7 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down("md")]: {
       flexDirection: "row",
       justifyContent: "space-between",
+      paddingLeft: "28px",
       width: "100%",
       margin: "0",
       padding: "10px",
@@ -49,20 +52,31 @@ const useStyles = makeStyles((theme) => ({
     color: "black",
     fontWeight: "bold",
     width: "100%",
+    fontFamily: "inherit",
     textAlign: "center",
     padding: theme.spacing(1),
     borderTopLeftRadius: "10px",
     borderTopRightRadius: "10px",
     [theme.breakpoints.down("md")]: {
       backgroundColor: "transparent",
+      fontFamily: "inherit",
       color: "black",
-      width: "25%",
+      width: "40%",
       paddingBottom: "30px",
       paddingRight: "40px",
-      paddingTop: "20.5px",
+      paddingTop: "27.5px",
       borderTopLeftRadius: "0",
       borderTopRightRadius: "0",
     },
+  },
+  headerModal: {
+    color: "black",
+    width: "100%",
+    padding: "8px",
+    textAlign: "center",
+    backgroundColor: "#faebd7",
+    borderTopLeftRadius: "10px",
+    borderTopRightRadius: "10px",
   },
   body: {
     width: "100%",
@@ -83,6 +97,15 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: "transparent",
     },
   },
+  footerModal: {
+    color: "black",
+    width: "100%",
+    padding: "8px",
+    textAlign: "center",
+    backgroundColor: "#faebd7",
+    borderBottomLeftRadius: "10px",
+    borderBottomRightRadius: "10px",
+  },
   item: {
     width: "100%",
     marginBottom: theme.spacing(2),
@@ -101,6 +124,7 @@ const useStyles = makeStyles((theme) => ({
   },
   itemPrice: {
     color: theme.palette.text.secondary,
+    fontFamily:"inherit"
   },
   controls: {
     display: "flex",
@@ -113,19 +137,22 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2),
     backgroundColor: "#a27356",
     color: "white",
+    fontFamily: "inherit",
     fontWeight: "bold",
+    borderRadius: "30px",
     fontSize: "20px",
     "&:hover": {
-      backgroundColor: "#a27356db",
+      backgroundColor: "#a27356bf",
       color: "white",
     },
     [theme.breakpoints.down("md")]: {
       marginTop: "0",
       color: "#ffffff",
       fontSize: "medium",
+      borderRadius: "30px",
       backgroundColor: "#a27356",
       "&:hover": {
-        backgroundColor: "rgba(255, 255, 255, 0.1)",
+        backgroundColor: "#a27356bf",
       },
     },
   },
@@ -136,6 +163,15 @@ const useStyles = makeStyles((theme) => ({
     "&:hover": {
       backgroundColor: "#a27356",
       color: "#ffffff",
+    },
+  },
+  divDialog: {
+    paddingLeft: "6%",
+    paddingBottom: "4%",
+    margin: "10px",
+    [theme.breakpoints.down("sm")]: {
+      paddingLeft: "6%",
+      paddingBottom: "4%",
     },
   },
 }));
@@ -169,6 +205,14 @@ const ShoppingCart = ({
   const ff = () => {
     nav("/order/checkout");
   };
+  function toPersianDigits(input) {
+    const persianDigits = '۰۱۲۳۴۵۶۷۸۹';
+    const str = String(input); 
+    return str.replace(/[0-9]/g, function (w) {
+      return persianDigits[w];
+    });
+  }
+  let persianNumber = toPersianDigits(totalPrice);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1290);
 
   useEffect(() => {
@@ -189,7 +233,7 @@ const ShoppingCart = ({
             سبد خرید ({basketLength})
           </Typography>
           <Button className={classes.button} onClick={ff}>
-            تکمیل سفارش
+            {persianNumber} تومان
           </Button>
         </Paper>
       ) : (
@@ -199,56 +243,64 @@ const ShoppingCart = ({
           </Typography>
           {statusItem ? (
             <div className={classes.body}>
-              {Array.isArray(getBuyBasket) &&
-                getBuyBasket.map((value, index) => (
-                  <div key={index} className={classes.item}>
-                    <div className={classes.itemTitle}>
-                      <div>
-                        <Typography
-                          style={{ fontWeight: "bold" }}
-                          variant="body1"
-                        >
-                          {value.title}
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          className={classes.itemPrice}
-                        >
-                          {value.price} تومان
-                        </Typography>
-                      </div>
-                      <div className={classes.controls}>
-                        <IconButton
-                          onClick={() => removeItem(value.id)}
-                          size="small"
-                          color="primary"
-                          className={classes.btnPlusMinus}
-                        >
-                          <RemoveIcon />
-                        </IconButton>
-                        <Typography className={classes.quantity}>
-                          {value.quantity}
-                        </Typography>
-                        <IconButton
-                          onClick={() =>
-                            addItem(
-                              value.id,
-                              value.title,
-                              value.description,
-                              value.price,
-                              value.photo
-                            )
-                          }
-                          size="small"
-                          color="primary"
-                          className={classes.btnPlusMinus}
-                        >
-                          <AddIcon />
-                        </IconButton>
+              <SimpleBar
+                style={{
+                  maxHeight: "350px",
+                  width: "276px",
+                  paddingLeft: "16px",
+                }}
+              >
+                {Array.isArray(getBuyBasket) &&
+                  getBuyBasket.map((value, index) => (
+                    <div key={index} className={classes.item}>
+                      <div className={classes.itemTitle}>
+                        <div>
+                          <Typography
+                            style={{ fontWeight: "bold",fontFamily:"inherit" }}
+                            variant="body1"
+                          >
+                            {value.title}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            className={classes.itemPrice}
+                          >
+                            {value.price} تومان
+                          </Typography>
+                        </div>
+                        <div className={classes.controls}>
+                          <IconButton
+                            onClick={() => removeItem(value.id)}
+                            size="small"
+                            color="primary"
+                            className={classes.btnPlusMinus}
+                          >
+                            <RemoveIcon />
+                          </IconButton>
+                          <Typography className={classes.quantity}>
+                            {value.quantity}
+                          </Typography>
+                          <IconButton
+                            onClick={() =>
+                              addItem(
+                                value.id,
+                                value.title,
+                                value.description,
+                                value.price,
+                                value.photo
+                              )
+                            }
+                            size="small"
+                            color="primary"
+                            className={classes.btnPlusMinus}
+                          >
+                            <AddIcon />
+                          </IconButton>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+              </SimpleBar>
             </div>
           ) : (
             <>
@@ -261,75 +313,96 @@ const ShoppingCart = ({
           )}
           <Divider />
           <div className={classes.footer}>
-            <Typography variant="h6">هزینه کل: {totalPrice} تومان</Typography>
+            <Typography style={{fontFamily:"inherit"}} variant="h6">هزینه کل: {persianNumber} تومان</Typography>
             <Button onClick={ff} className={classes.button}>
               تکمیل سفارش
             </Button>
           </div>
         </Paper>
       )}
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>
-          <Typography style={{ fontWeight: "bold" }}>
-            سبد خرید ({basketLength}){" "}
-          </Typography>{" "}
-        </DialogTitle>
-        <DialogContent>
-          {getBuyBasket.map((value, index) => (
-            <div key={index} className={classes.item}>
-              <div className={classes.itemTitle}>
-                <Typography variant="body1">{value.title}</Typography>
-                <div className={classes.controls}>
-                  <IconButton
-                    onClick={() => removeItem(value.id)}
-                    size="small"
-                    color="primary"
-                  >
-                    <RemoveIcon />
-                  </IconButton>
-                  <Typography className={classes.quantity}>
-                    {value.quantity}
-                  </Typography>
-                  <IconButton
-                    onClick={() =>
-                      addItem(
-                        value.id,
-                        value.title,
-                        value.description,
-                        value.price / value.quantity,
-                        value.photo
-                      )
-                    }
-                    size="small"
-                    color="primary"
-                  >
-                    <AddIcon />
-                  </IconButton>
-                </div>
-              </div>
-              <Typography variant="body2" className={classes.itemPrice}>
-                {value.price} تومان
-              </Typography>
+      <Dialog style={{ padding: "3%" }} open={open} onClose={handleClose}>
+        <div className={classes.divDialog}>
+          <DialogTitle>
+            <div className={classes.headerModal}>
+              <Typography style={{ fontWeight: "bold" ,fontFamily:"Shabnam"}}>
+                سبد خرید ({basketLength}){" "}
+              </Typography>{" "}
             </div>
-          ))}
-          <Divider />
-          <div className={classes.footer}>
-            <Typography variant="h6">هزینه کل: {totalPrice} تومان</Typography>
-          </div>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            style={{ marginLeft: "14px" }}
-            className={classes.button}
-            onClick={handleClose}
-            color="primary"
-          >
-            بستن
-          </Button>
-          <Button className={classes.button} onClick={ff}>
-            تکمیل سفارش
-          </Button>
-        </DialogActions>
+          </DialogTitle>
+          {statusItem ? (
+            <DialogContent style={{ overflowY: "unset" }}>
+              {getBuyBasket.map((value, index) => (
+                <div key={index} className={classes.item}>
+                  <div className={classes.itemTitle}>
+                    <div>
+                      <Typography style={{fontFamily:"Shabnam"}} variant="body1">{value.title}</Typography>
+                      <Typography variant="body2" className={classes.itemPrice}>
+                        {value.price} تومان
+                      </Typography>
+                    </div>
+                    <div className={classes.controls}>
+                      <IconButton
+                        onClick={() => removeItem(value.id)}
+                        size="small"
+                        color="primary"
+                        className={classes.btnPlusMinus}
+                      >
+                        <RemoveIcon />
+                      </IconButton>
+                      <Typography className={classes.quantity}>
+                        {value.quantity}
+                      </Typography>
+                      <IconButton
+                        onClick={() =>
+                          addItem(
+                            value.id,
+                            value.title,
+                            value.description,
+                            value.price / value.quantity,
+                            value.photo
+                          )
+                        }
+                        size="small"
+                        color="primary"
+                        className={classes.btnPlusMinus}
+                      >
+                        <AddIcon />
+                      </IconButton>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              <Divider />
+              <div className={classes.footerModal}>
+                <Typography style={{fontFamily:"Shabnam"}} variant="h6">
+                  هزینه کل: {persianNumber} تومان
+                </Typography>
+              </div>
+            </DialogContent>
+          ) : (
+            <div>
+              <img
+                style={{ width: "20%", paddingRight: "43%" }}
+                className={classes.body}
+                src={basketEmpty}
+              />
+              <div className={classes.body}>سبد خرید خالی است</div>
+            </div>
+          )}
+          <DialogActions>
+            <Button
+              style={{ marginLeft: "14px" }}
+              className={classes.button}
+              onClick={handleClose}
+              color="primary"
+            >
+              بستن
+            </Button>
+            <Button className={classes.button} onClick={ff}>
+              تکمیل سفارش
+            </Button>
+          </DialogActions>
+        </div>
       </Dialog>
     </>
   );
